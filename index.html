@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Describes the page for search engines and browser previews -->
+    <meta
+      name="description"
+      content="Smart Investment Diversification Guide — AI-powered portfolio analysis chatbot for personalized diversification advice."
+    />
+
+    <title>Investment Advisor | Diversification Guide</title>
+
+    <!-- Loading Inter from Google Fonts for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+
+    <!-- Outer wrapper that holds the whole app in a centered column -->
+    <div class="page-wrapper">
+
+      <!-- Top navigation bar with branding and controls -->
+      <header class="top-bar" role="banner">
+
+        <!-- Left side: logo + app name -->
+        <div class="brand-section">
+          <div class="logo-box" aria-hidden="true">
+            <!-- Simple SVG chart icon to represent investment tracking -->
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="8" fill="#4F46E5"/>
+              <polyline
+                points="5,19 10,12 14,15 18,9 23,13"
+                stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"
+              />
+              <circle cx="23" cy="13" r="1.8" fill="#6EE7B7"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="app-title">Investment Advisor</h1>
+            <p class="app-subtitle">AI-Powered Diversification Guide</p>
+          </div>
+        </div>
+
+        <!-- Right side: language switch, clear button, and connection status -->
+        <div class="toolbar">
+
+          <!-- Clicking this toggles between English and Hindi -->
+          <button
+            id="langToggle"
+            class="tool-btn lang-switch"
+            onclick="swapLanguage()"
+            aria-label="Switch between English and Hindi"
+            title="Switch language"
+          >हिं</button>
+
+          <!-- Trash icon — clears the current chat session -->
+          <button
+            id="clearBtn"
+            class="tool-btn trash-btn"
+            onclick="resetChat()"
+            aria-label="Clear chat history"
+            title="Clear Session"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <!-- Green dot = connected, amber = AI is thinking -->
+          <div class="status-pill" id="statusBadge" aria-live="polite">
+            <span class="dot-indicator" id="statusDot"></span>
+            <span class="status-text" id="statusText">Online</span>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- Main chat area -->
+      <main class="chat-area" role="main">
+
+        <!-- Scrollable message log where bubbles appear -->
+        <section
+          class="message-feed"
+          id="chatMessages"
+          role="log"
+          aria-live="polite"
+          aria-label="Conversation"
+        >
+          <!-- JavaScript renders messages here dynamically -->
+        </section>
+
+        <!-- Animated dots that show while the AI is generating a reply -->
+        <div class="thinking-row hidden" id="typingIndicator" aria-live="polite">
+          <div class="think-avatar" aria-hidden="true">AI</div>
+          <div class="think-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- Text input + send button row -->
+        <div class="compose-bar" role="form" aria-label="Type your portfolio question">
+          <textarea
+            id="userInput"
+            class="compose-field"
+            placeholder="e.g. I have 60% stocks, 30% FD, 10% gold — how should I diversify?"
+            rows="1"
+            maxlength="2000"
+            aria-label="Your message"
+            autocomplete="off"
+            spellcheck="true"
+          ></textarea>
+
+          <!-- Disabled by default — enables as soon as the user types something -->
+          <button
+            class="submit-btn"
+            id="sendBtn"
+            aria-label="Send message"
+            title="Send"
+            disabled
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M22 2L11 13" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="btn-text">Send</span>
+          </button>
+        </div>
+
+        <!-- One-tap portfolio scenario shortcuts — helps users get started quickly -->
+        <div class="prompt-chips" role="list" aria-label="Example portfolio scenarios">
+          <button class="scenario-chip" role="listitem"
+            onclick="prefillInput('I have 70% in stocks and 30% in bonds. Analyze the concentration risk and suggest how I should rebalance and diversify.')"
+          >📊 70% Stocks / 30% Bonds</button>
+
+          <button class="scenario-chip" role="listitem"
+            onclick="prefillInput('I have 80% in stocks and 20% in fixed deposits. Analyze and suggest diversification.')"
+          >💹 80% Stocks / 20% FD</button>
+
+          <button class="scenario-chip" role="listitem"
+            onclick="prefillInput('I have invested 100% of my savings in crypto. What are the risks and how should I diversify?')"
+          >⚠️ All in Crypto</button>
+
+          <button class="scenario-chip" role="listitem"
+            onclick="prefillInput('I am a conservative investor with 50% in FD, 30% in gold, 20% in debt mutual funds. How should I diversify for better returns?')"
+          >🛡️ Conservative Portfolio</button>
+
+          <button class="scenario-chip" role="listitem"
+            onclick="prefillInput('I have ₹5 lakhs to invest. Suggest a well-diversified portfolio for a moderate risk appetite.')"
+          >💼 ₹5L Moderate Risk</button>
+
+          <button class="scenario-chip" role="listitem"
+            onclick="prefillInput('What is the ideal allocation across equity, debt, real estate and gold for long-term wealth creation?')"
+          >🌍 Ideal Long-Term Mix</button>
+        </div>
+
+        <!-- Keyboard shortcut hint + live character counter -->
+        <p class="compose-hint">
+          <kbd>Enter</kbd> to send &nbsp;·&nbsp; <kbd>Shift+Enter</kbd> for new line
+          &nbsp;·&nbsp; <span id="charCount">0 / 2000</span>
+        </p>
+
+      </main>
+
+      <!-- Disclaimer at the bottom — important for a finance app -->
+      <footer class="bottom-bar" role="contentinfo">
+        ⚠️ For educational purposes only. Always consult a certified financial advisor before investing.
+      </footer>
+
+    </div>
+
+    <!-- config.js must load first because script.js reads from SETTINGS -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
